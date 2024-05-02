@@ -795,7 +795,7 @@ dkms statusコマンドでDKMSによって構成されるカーネルモジュ�
 </tr>
 </tbody>
 </table>
-<p>modules.depを参照</p>
+<p>/etc/modprobe.d/ または modules.depを参照</p>
 <h2 data-heading="udev">udev</h2>
 <p><img alt="Pasted image 20240407234242.png" src="Pasted image 20240407234242.png" class="internal-embed"><br>
 udevのメイン設定ファイルは <code>/etc/udev/udev.conf</code> です。<code>/etc/udev/rules.d</code> ディレクトリ内には、デバイスファイルの作成に関する個別の設定ファイル（ルールファイル）が入っています。</p>
@@ -875,6 +875,41 @@ systemdを使ったシステムにおいて、ユニット、ターゲットの�
 <img alt="Pasted image 20240413113028.png" src="Pasted image 20240413113028.png" class="internal-embed"></p>
 <h3 data-heading="systemd-delta コマンド">systemd-delta コマンド</h3>
 <p>同じファイル名のユニット、ターゲットの定義ファイルが複数あり、上図のディレクトリの優先度に基づいて、デフォルトの定義ファイルを上書きしている場合等、どのファイルがどのように影響を受けているか、確認できるのが「systemd-delta」コマンドです。</p>
+<h2 data-heading="journalctl コマンド">journalctl コマンド</h2>
+<p>書式<br>
+<code>jounalctl [オプション]</code><br>
+systemdを採用したシステムでログ(ジャーナル)を閲覧できる</p>
+<table>
+<thead>
+<tr>
+<th>オプション</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-f</td>
+<td>ログの末尾を表示し続ける</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>ログを新しい順にする</td>
+</tr>
+<tr>
+<td>-u Unit名</td>
+<td>指定した Unit のログを表示する</td>
+</tr>
+<tr>
+<td>-p err</td>
+<td>errプライオリティ以上のログを出力</td>
+</tr>
+</tbody>
+</table>
+<h2 data-heading="システムの起動時にカーネルが出力したログ">システムの起動時にカーネルが出力したログ</h2>
+<ul>
+<li>&nbsp;<code>dmesg</code> コマンドを実行する</li>
+<li><code>cat /var/log/dmesg</code></li>
+</ul>
 <h1 data-heading="22_ システムのリカバリ">22_ システムのリカバリ</h1>
 <h2 data-heading="カーネルの起動オプション">カーネルの起動オプション</h2>
 <table>
@@ -907,6 +942,11 @@ systemdを使ったシステムにおいて、ユニット、ターゲットの�
 </tr>
 </tbody>
 </table>
+<h2 data-heading="起動オプションの確認">起動オプションの確認</h2>
+<ul>
+<li>&nbsp;<code>dmesg</code> コマンドを実行する</li>
+<li><code>/proc/cmdline</code> を参照する</li>
+</ul>
 <h2 data-heading="GRUBのメニュー">GRUBのメニュー</h2>
 <p>/boot/grub/menu.lst<br>
 <img alt="Pasted image 20240412221756.png" src="Pasted image 20240412221756.png" class="internal-embed"><br>
@@ -922,6 +962,19 @@ initrd 初期 RAM ディスクイメージファイル</p>
 <li>grub-install</li>
 <li>grub2-install</li>
 <li>grub</li>
+</ul>
+<h2 data-heading="GRUB の設定ファイル">GRUB の設定ファイル</h2>
+<ul>
+<li><code>/boot/grub/menu.lst</code> ディストリビューションによっては  <code>/boot/grub/grub.conf</code></li>
+</ul>
+<h2 data-heading="GRUB2 の設定ファイル">GRUB2 の設定ファイル</h2>
+<ul>
+<li><code>/boot/grub/grub.cfg</code> または <code>/boot/grub2/grub.cfg</code> 直接いじらない
+<ul>
+<li>UEFI の場合 <code>/boot/efi/EFI/***/grub.cfg</code> 直接いじらない</li>
+</ul>
+</li>
+<li><code>/etc/default/grub</code> <code>/etc/grub.d/</code> に記述し<code>grub-mkconfig</code> または <code>grub2-mkconfig</code> コマンドで、設定対象の「grub.cfg」を指定して内容を反映</li>
 </ul>
 <h2 data-heading="UEFI">UEFI</h2>
 <ul>
@@ -957,6 +1010,9 @@ initrd 初期 RAM ディスクイメージファイル</p>
 </li>
 <li>
 <p>ISOLINUXは、CD-ROMで使用されるISO 9660ファイルシステムからLinuxを起動するブートローダです。  </p>
+<ul>
+<li>本体：isolinux.bin</li>
+</ul>
 </li>
 <li>
 <p>PXELINUXは、PXE（Preboot Execution Environment）を使用してネットワークサーバからLinuxを起動するブートローダです。  </p>
@@ -1119,7 +1175,7 @@ smartdデーモンはS.M.A.R.Tの情報を定期的に監視する</p>
 <h2 data-heading="mdadm">mdadm</h2>
 <p>オプションの位置はどこでも良い<br>
 <code>mdadm /dev/dm0 -f /dev/sda</code><br>
-<code>mdadm --fail /dev/dm0 /dev/sdb</code></p>
+<code>mdadm --fail /dev/dm0 /dev/sdb**xfs_info**</code></p>
 <p>Create モード (-C|--create)<br>
 <img alt="Pasted image 20240407230834.png" src="Pasted image 20240407230834.png" class="internal-embed"><br>
 Manage モード (--manage)<br>
@@ -1150,9 +1206,16 @@ Linuxでは、Trimを行うコマンドとして、fstrimがあります。</p>
 <p><img alt="Pasted image 20240408214613.png" src="Pasted image 20240408214613.png" class="internal-embed"><br>
 /dev/sda1 等と数字がついたものですが、こちらはハードディスクではなく「そのハードディスク上のパーティション」を指すデバイスファイルです。</p>
 <h2 data-heading="hdparmコマンド">hdparmコマンド</h2>
-<p><code>hdparm [オプション] ハードディスクデバイス</code><br>
+<p>IDEハードディスクのパラメータを確認したり設定したり<br>
+<code>hdparm [オプション] ハードディスクデバイス</code><br>
 オプション<br>
 <img alt="Pasted image 20240407233039.png" src="Pasted image 20240407233039.png" class="internal-embed"></p>
+<h2 data-heading="sdparm コマンド">sdparm コマンド</h2>
+<p>SCSI/SATA/USBディスクのパラメータを確認したり設定したり<br>
+<code>sdparm [オプション] デバイスファイル</code><br>
+例<br>
+<code>sdparm --command=stop /dev/sdb</code><br>
+<code>sdparm --clean=WCE /dev/sdb</code> write-back cacheを無効</p>
 <h2 data-heading="iscsiデーモン">iscsiデーモン</h2>
 <p>iscsiデーモンをサーバ起動時に自動起動とすることで、サーバ起動時にiSCSIターゲットをデバイスとして使用可能にします。</p>
 <p>iscsid.conf<br>
